@@ -7,7 +7,7 @@
    (vec:: 2
      (vec:: 3
        (vec:: 4
-         (vec:: 5 vecnil))))))
+         (vec:: 25 vecnil))))))
 
 (claim base-last
   (Pi ((E U))
@@ -55,7 +55,6 @@
 
 (last Nat 4 tmp_vector)
 
-
 (claim first
   (Pi ((E U)
          (l Nat))
@@ -68,3 +67,55 @@
       (head v))))
 
 (first Nat 4 tmp_vector)
+
+
+(claim base-drop-last
+  (Pi ((E U))
+    (-> (Vec E (add1 zero))
+      (Vec E zero))))
+
+(define base-drop-last
+  (lambda (E)
+    (lambda (v)
+      (the (Vec E 0) vecnil))))
+
+(claim mot-drop-last
+  (-> U Nat U))
+
+(define mot-drop-last
+  (lambda 
+    (E l-1)
+        (-> (Vec E (add1 l-1))
+          (Vec E l-1))))
+
+(claim step-drop-last
+  (Pi 
+    ((E U)
+      (l Nat))
+        (-> 
+          (-> (Vec E (add1 l))
+            (Vec E l))
+              (-> (Vec E (add1 (add1 l)))
+                (Vec E (add1 l))))))
+
+(define step-drop-last
+  (lambda
+    (E l)
+      (lambda (answer_l-1)
+        (lambda (vec_l)
+          (vec:: (head vec_l) (answer_l-1 (tail vec_l)))))))
+
+(claim drop-last
+  (Pi ((E U)
+        (l-1 Nat))
+          (-> (Vec E (add1 l-1))
+            (Vec E l-1))))
+
+(define drop-last
+  (lambda (E l)
+    (ind-Nat l
+      (mot-drop-last E)
+      (base-drop-last E)
+      (step-drop-last E))))
+
+(drop-last Nat 4 tmp_vector)
