@@ -213,27 +213,107 @@
             
 (add1+=+add1 10 12)
 
+
+(claim mot-step-double-twice
+    (-> Nat Nat U))
+
+(define mot-step-double-twice
+    (lambda (n-1 m)
+        (= Nat (add1 (add1 (double n-1))) (add1 m))))
+
+
+; (mot-double=twice n-1):= (= Nat (double (add1 n-1)) (twice (add1 n-1)))
+; What I want: (= Nat (add1 (add1 (double n-1))) (+ (add1 n-1) (add1 n-1)) )
+; (= Nat (add1 (add1 (double n-1))) (add1 (+ n-1 (add1 n-1))) )
+
+; what I want: (add1 (+ n-1 (add1 n-1))) -> (add1 (add1 (+ n-1 n-1)))
+; solved by `add1+=+add1`
+
+
+; double=twice_n-1: (= Nat (double n-1) (+ n-1 n-1))
+; add1+=+add1: (= Nat (add1 (+ n m)) (+ n (add1 m)))
+
+
 (claim step-double=twice
     (Pi ((n-1 Nat))
         (-> 
             (mot-double=twice n-1)
             (mot-double=twice (add1 n-1)))))
 
-(claim mot-step-double-twice
-    (-> Nat Nat U))
-
-(define )
-
-; (= Nat (double (add1 n-1)))
-
 (define step-double=twice
     (lambda (n-1)
         (lambda (double=twice_n-1)
-            (replace ))
+            (replace (add1+=+add1 n-1 n-1)
+                (mot-step-double-twice n-1)
+                (cong double=twice_n-1 (+ 2))))))
 
-; (define double=twice
-;     (lambda (n)
-;         (ind-Nat n
-;             mot-double=twice
-;             base-double=twice)))
+(define double=twice
+    (lambda (n)
+        (ind-Nat n
+            mot-double=twice
+            base-double=twice
+            step-double=twice)))
 
+(double=twice 234)
+
+
+; (mot-twice-vec T) is the actual motive, where T is any type.
+(claim mot-double-vec
+    (-> U Nat U))
+
+(define mot-double-vec
+    (lambda (T n)
+        (-> (Vec T n)
+            (Vec T (double n)))))
+
+(claim step-double-vec
+    (Pi ((T U)
+        (l-1 Nat))
+            (->
+                (-> (Vec T l-1)
+                    (Vec T (double l-1)))
+                (-> (Vec T (add1 l-1))
+                    (Vec T (double (add1 l-1)))))))
+
+(define step-double-vec
+    (lambda (T l-1)
+        (lambda (almost_step)
+            (lambda (vec_l)
+                (vec:: (head vec_l)
+                    (vec:: (head vec_l)
+                        (almost_step (tail vec_l))))))))
+
+(claim base-double-vec
+    (Pi ((T U))
+        (-> (Vec T 0)
+            (Vec T (double 0)))))
+
+(define base-double-vec
+    (lambda (T)
+        (lambda (almost)
+            vecnil)))
+
+(claim double-vec
+    (Pi ((T U)
+        (l Nat))
+            (-> (Vec T l)
+                (Vec T (double l)))))
+
+(define double-vec
+    (lambda (T l)
+        (ind-Nat l
+            (mot-double-vec T)
+            (base-double-vec T)
+            (step-double-vec T))))
+
+(claim tmp_vector
+    (Vec Nat 5))
+
+(define tmp_vector
+    (vec:: 10
+        (vec:: 2
+            (vec:: 3
+                (vec:: 4
+                    (vec:: 25 vecnil))))))
+
+(double-vec Nat 5 tmp_vector)
