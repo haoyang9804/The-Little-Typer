@@ -59,3 +59,8 @@
 (last Nat 4 tmp_vector)
 
 
+(claim same3
+    (= Nat 3 3))
+
+(define same3
+    (same 3))

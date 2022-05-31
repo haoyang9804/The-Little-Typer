@@ -149,15 +149,15 @@
     (-> Nat Nat))
 
 (define twice
-    (lambda (n))
-        (+ n n))
+    (lambda (n)
+        (+ n n)))
 
 (claim double=twice
     (Pi ((n Nat))
         (= Nat (double n) (twice n))))
 
 (claim mot-double=twice
-    -> Nat U)
+    (-> Nat U))
 
 (define mot-double=twice
     (lambda (n)
@@ -167,31 +167,73 @@
     (= Nat (double 0) (twice 0)))
 
 (define base-double=twice
-    (same (add1 0)))
+    (same 0))
 
-(claim step-double=twice
-    (Pi ((n-1 Nat))
-        (-> 
-            (= Nat (double n-1) (twice n-1))
-            (= Nat (add1 (add1 (double n-1))) (add1 (add1 (twice n-1)))))))
 
-(define step-double=twice
-    (lambda (n-1)
-        (lambda (almost_answer_n-1)
-            (replace
-                almost_answer_n-1
-                (lambda (k)
-                    (= Nat (add1 (add1 (double n-1))) (add1 (add1 k)))
-                (same (add1 (add1 (double n-1)))))))))
 
 (claim add1+=+add1
     (Pi ((n Nat)
             (m Nat))
-                (= Nat (add1 (+ n j)) (+ n (add1 j)))))
+                (= Nat (add1 (+ n m)) (+ n (add1 m)))))
 
-(define double=twice
-    (lambda (n)
+(claim base-add1+=+add1
+    (Pi ((m Nat))
+        (= Nat (add1 m) (add1 m))))
+
+(define base-add1+=+add1
+    (lambda (m)
+        (same (add1 m))))
+
+(claim mot-add1+=+add1
+    (-> Nat Nat U))
+
+(define mot-add1+=+add1
+    (lambda (m n)
+        (= Nat (add1 (+ n m)) (+ n (add1 m)))))
+
+(mot-add1+=+add1 1 2)
+
+(claim step-add1+=+add1
+    (Pi ((m Nat)
+        (n-1 Nat))
+        (-> (mot-add1+=+add1 m n-1)
+            (mot-add1+=+add1 m (add1 n-1)))))
+
+(define step-add1+=+add1
+    (lambda (n-1 m)
+        (lambda (almost_same)
+            (cong almost_same (+ 1)))))
+
+(define add1+=+add1
+    (lambda (n m)
         (ind-Nat n
-            mot-double=twice
-            base-double=twice)))
+            (mot-add1+=+add1 m)
+            (base-add1+=+add1 m) 
+            (step-add1+=+add1 m))))
+            
+(add1+=+add1 10 12)
+
+(claim step-double=twice
+    (Pi ((n-1 Nat))
+        (-> 
+            (mot-double=twice n-1)
+            (mot-double=twice (add1 n-1)))))
+
+(claim mot-step-double-twice
+    (-> Nat Nat U))
+
+(define )
+
+; (= Nat (double (add1 n-1)))
+
+(define step-double=twice
+    (lambda (n-1)
+        (lambda (double=twice_n-1)
+            (replace ))
+
+; (define double=twice
+;     (lambda (n)
+;         (ind-Nat n
+;             mot-double=twice
+;             base-double=twice)))
 
