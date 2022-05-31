@@ -184,6 +184,11 @@
                     (= Nat (add1 (add1 (double n-1))) (add1 (add1 k)))
                 (same (add1 (add1 (double n-1)))))))))
 
+(claim add1+=+add1
+    (Pi ((n Nat)
+            (m Nat))
+                (= Nat (add1 (+ n j)) (+ n (add1 j)))))
+
 (define double=twice
     (lambda (n)
         (ind-Nat n
