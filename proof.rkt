@@ -317,3 +317,56 @@
                     (vec:: 25 vecnil))))))
 
 (double-vec Nat 5 tmp_vector)
+
+
+(claim twice-Vec
+    (Pi ((E U)
+        (l Nat))
+            (-> (Vec E l)
+                (Vec E (twice l)))))
+
+(define twice-Vec
+    (lambda (E l)
+        (lambda (vec)
+            (replace (symm (symm (double=twice l)))
+                (lambda (k)
+                    (Vec E k))
+                (double-vec E l vec)))))
+
+(twice-Vec Nat 5 tmp_vector)
+
+
+
+
+
+(claim mot-the-n-th-element-of-Vec
+    (E))
+
+(define mot-the-n-th-element-of-Vec
+    (lambda (nth E l)
+        ()))
+
+(claim base-the-n-th-element-of-Vec
+    (Pi ((E U)
+        (l Nat))
+            (-> (Vec E l)
+                (E))))
+
+(define base-the-n-th-element-of-Vec
+    (lambda (E l)
+        (lambda (vec)
+            (head vec))))
+
+
+
+(claim the-n-th-element-of-Vec 
+    (Pi ((E U)
+        (l Nat))
+            (-> (Vec E l)
+                E)))
+
+(define the-n-th-element-of-Vec
+    (lambda (E l)
+        (lambda (vec)
+            (ind-Nat l
+                ))))
